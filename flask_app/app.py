@@ -23,7 +23,7 @@ def home():
 def predict():
     start_time = time.time()
 
-    if not request.json or data not in request.json:
+    if not request.json or "data" not in request.json:
         abort(400) 
 
     data_req = request.get_json(force=True)
