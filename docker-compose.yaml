@@ -1,23 +1,30 @@
 version: "3"
 
 services: 
-    flask_app:
-        container_name: flask_app
+    flask_server:
+        # container_name: flask_app
         restart: always
         build: ./flask_app
-        ports:
-            - "8000:8000"
+        expose: 
+            - "8000"
+        networks: 
+            - "mlapp_net"
         command: gunicorn -w 1 -b 0.0.0.0:8000 wsgi:server
     
-    nginx:
-        container_name: nginx
+    nginx_server:
+        # container_name: nginx
         restart: always
         build: ./nginx
-        environment: 
+        environment:
             - SERVER_NAME="0.0.0.0"
         ports:
             - "80:80"
             # - "443:443"
-        depends_on: 
-            - flask_app
+        networks: 
+            - "mlapp_net"
+        depends_on:
+            - flask_server
 
+networks:
+    mlapp_net:
+        driver: bridge
