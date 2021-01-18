@@ -1,43 +1,50 @@
 import pickle
 import numpy as np
 import pandas as pd
-import sklearn as sk 
-from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import mean_squared_error
+from sklearn.metrics import mean_squared_error, accuracy_score
 import config
 
+from tools import (read_data_classification,
+                   read_data_regression,
+                   model_search_classification,
+                   model_search_regression,
+                   evaluate_model_classification,
+                   evaluate_model_regression
+                   )
+
+
 def train_model():
-    data_path = config.DATA_PATH
-    data = pd.read_csv(data_path)
+    """Train a model
 
-    X = data.drop("label", axis=1).values
-    y = data["label"].values
+    Returns:
+        model_pipeline: Model pipeline
+    """
 
-    model = LinearRegression()
+    X, y = read_data_classification()
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.2)
 
-    model.fit(X_train, y_train)
-    pred_train = model.predict(X_train)
-    pred_test = model.predict(X_test)
+    model_pipeline = model_search_classification(X_train, y_train)
+    print("Best Model Piepline:", model_pipeline)
 
-    rmse_train = np.sqrt(mean_squared_error(y_train, pred_train))
-    rmse_test = np.sqrt(mean_squared_error(y_test, pred_test))
+    model_pipeline.fit(X_train, y_train)
 
-    print("Train RMSE:", rmse_train)
-    print("Test RMSE:", rmse_test)
-    print("Model intercept:", model.intercept_)
-    print("Model Coefficients", model.coef_)
+    evaluate_model_classification(model_pipeline, X_train, X_test,
+                                  y_train, y_test)
 
-    return model
+    return model_pipeline
 
 
 if __name__ == '__main__':
 
-    model = train_model()
+    model_pipeline = train_model()
 
-    model_path = config.MODEL_PATH
-    with open(model_path, "wb") as f:
-        pickle.dump(model, f)
+    if hasattr(model_pipeline, "predict"):
+        model_path = config.MODEL_PATH
+        with open(model_path, "wb") as f:
+            pickle.dump(model_pipeline, f)
 
+        print(f"Model is trained and saved in: {model_path}")
+    else:
+        print("The trained model does not have 'predict' attribute!")
