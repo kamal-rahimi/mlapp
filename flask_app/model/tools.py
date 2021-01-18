@@ -9,6 +9,49 @@ from sklearn.ensemble import GradientBoostingRegressor, GradientBoostingClassifi
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.metrics import mean_squared_error, classification_report
 from sklearn.datasets import make_classification, make_regression
+from sklearn.base import BaseEstimator, TransformerMixin, ClassifierMixin, RegressorMixin
+
+
+class CustomPreprocessing(BaseEstimator, TransformerMixin):
+    def __init__(self):
+        self._scaler = StandardScaler()
+    
+    def fit(self, X, y=None):
+        self._scaler.fit(X)
+        return self
+
+    def transform(self, X, y=None):
+        return self._scaler.transform(X)
+
+    def inverse_transform(self, X, y=None):
+        return self._scaler.inverse_transform(X)
+
+
+class CustomClassifier(BaseEstimator, ClassifierMixin):
+    def __init__(self):
+        self._model = RandomForestClassifier()
+    
+    def fit(self, X, y=None):
+        self._model.fit(X, y)
+        return self
+
+    def predict(self, X):
+        return self._model.predict(X)
+
+    def predict_proba(self, X):
+        return self._model.predict_proba(X)
+
+
+class CustomRegressor(BaseEstimator, RegressorMixin):
+    def __init__(self):
+        self._model = RandomForestRegressor()
+    
+    def fit(self, X, y=None):
+        self._model.fit(X, y)
+        return self
+
+    def predict(self, X):
+        return self._model.predict(X)
 
 
 def read_data_regression():
@@ -34,9 +77,10 @@ def read_data_classification():
 
 
 def model_search_regression(X_train, y_train):
-    scaler = StandardScaler()
+    # scaler = StandardScaler()
+    preprocess = CustomPreprocessing()
     model = SGDRegressor()
-    model_pipeline = Pipeline([("scaler", scaler), ("model", model)])
+    model_pipeline = Pipeline([("preprocess", preprocess), ("model", model)])
 
     search_space = [{"model": [SGDRegressor()],
                      },
@@ -63,9 +107,10 @@ def model_search_regression(X_train, y_train):
 
 
 def model_search_classification(X_train, y_train):
-    scaler = StandardScaler()
+    # scaler = StandardScaler()
+    preprocess = CustomPreprocessing()
     model = SGDClassifier()
-    model_pipeline = Pipeline([("scaler", scaler), ("model", model)])
+    model_pipeline = Pipeline([("preprocess", preprocess), ("model", model)])
 
     search_space = [{"model": [SGDClassifier()],
                      },
@@ -115,4 +160,3 @@ def evaluate_model_classification(model_pipeline, X_train, X_test,
 
     print("Classification Report on Test Data:")
     print(classification_report(y_test, y_pred_test))
-
