@@ -3,7 +3,6 @@ import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, accuracy_score
-import config
 
 from tools import (read_data_classification,
                    read_data_regression,
@@ -13,6 +12,7 @@ from tools import (read_data_classification,
                    evaluate_model_regression
                    )
 
+MODEL_PATH = "./model.pkl"
 
 def train_model():
     """Train a model
@@ -41,10 +41,9 @@ if __name__ == '__main__':
     model_pipeline = train_model()
 
     if hasattr(model_pipeline, "predict"):
-        model_path = config.MODEL_PATH
-        with open(model_path, "wb") as f:
+        with open(MODEL_PATH, "wb") as f:
             pickle.dump(model_pipeline, f)
 
-        print(f"Model is trained and saved in: {model_path}")
+        print(f"Model is trained and saved in: {MODEL_PATH}")
     else:
         print("The trained model does not have 'predict' attribute!")

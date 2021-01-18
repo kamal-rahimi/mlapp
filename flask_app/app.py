@@ -4,19 +4,20 @@ import pickle
 import numpy as np
 import json
 import time
-import config
 import os
 import logging
 
+FLASK_APP_PORT = 5000
 
-model_path = config.MODEL_PATH
-if os.path.exists(model_path):
-    with open(model_path, "rb") as f:
+MODEL_PATH = "./model/model.pkl"
+
+if os.path.exists(MODEL_PATH):
+    with open(MODEL_PATH, "rb") as f:
         model = pickle.load(f)
     
     logging.info("Model is loaded.")
 else:
-    logging.info(f"No trained model is found at '{model_path}' path")
+    logging.info(f"No trained model is found at '{MODEL_PATH}' path")
 
 server = Flask(__name__)
 
@@ -42,8 +43,8 @@ def predict():
     response["input_data"] = data.tolist()
     try:
         preditions = model.predict(data)
-            # for i in pred:
-            # result.append(dict(zip(le.classes_, i/sum(i))))
+        # for i in pred:
+        # result.append(dict(zip(le.classes_, i/sum(i))))
         response["result"] = "OK"
         response["predictions"] = preditions.tolist()
     except Exception as e:
@@ -58,5 +59,4 @@ def predict():
 
 
 if __name__ == "__main__":
-    flask_app_port = config.FLASK_APP_PORT
-    server.run(host="0.0.0.0", port=flask_app_port, debug=True)
+    server.run(host="0.0.0.0", port=FLASK_APP_PORT, debug=True)
