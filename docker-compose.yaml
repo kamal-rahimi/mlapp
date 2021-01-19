@@ -4,7 +4,7 @@ services:
     flask_server:
         # container_name: flask_app
         restart: always
-        build: ./flask_app
+        build: ./model_app
         expose: 
             - "8000"
         networks: 
