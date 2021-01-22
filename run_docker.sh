@@ -26,4 +26,4 @@ docker-compose down
 
 # strat running the app
 echo "Building and running docker containers ..."
-docker-compose up --build -d --scale flask_app=2
+docker-compose up --build -d --scale flask_server=2
