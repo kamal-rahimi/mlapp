@@ -6,10 +6,11 @@ import json
 import time
 import os
 import logging
+from model.train import train_model
 
 FLASK_APP_PORT = 5000
 
-MODEL_PATH = "./model/model.pkl"
+MODEL_PATH = './model/model.pkl'
 
 if os.path.exists(MODEL_PATH):
     with open(MODEL_PATH, "rb") as f:

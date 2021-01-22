@@ -7,7 +7,7 @@ To train the model, run:
 ```
 python3 -m pip install model_app/requirements.txt
 
-sh train_model.sh
+python model_app/train_model.py
 ```
 
 ## Deploy Model
